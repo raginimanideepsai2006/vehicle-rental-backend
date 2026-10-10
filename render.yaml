@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: vehicle-rental-backend
+    env: java
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/vehicle-rental-backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: vehiclerental-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: vehiclerental-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: vehiclerental-db
+          property: password
+
+databases:
+  - name: vehiclerental-db
+    databaseName: vehiclerental_db
+    user: root
