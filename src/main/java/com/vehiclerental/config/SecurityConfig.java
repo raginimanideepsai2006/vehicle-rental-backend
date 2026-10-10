@@ -76,18 +76,20 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public frontend static files & SPA pages
+                        .requestMatchers("/", "/index.html", "/assets/**", "/*.svg", "/*.ico", "/*.css", "/*.js").permitAll()
+                        .requestMatchers("/vehicles/**", "/login", "/register", "/about", "/my-bookings", "/customer/**").permitAll()
                         // Public authentication endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Public vehicle browsing
+                        // Public vehicle browsing & reviews API
                         .requestMatchers(HttpMethod.GET, "/api/vehicles/**").permitAll()
-                        // Public reviews view
                         .requestMatchers(HttpMethod.GET, "/api/reviews/vehicle/**").permitAll()
-                        // Admin-only management endpoints
+                        // Admin-only management API endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/vehicles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/vehicles/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/vehicles/**").hasRole("ADMIN")
-                        // All other endpoints require authentication
+                        // All other API endpoints require authentication
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
